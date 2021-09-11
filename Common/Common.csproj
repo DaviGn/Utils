@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PagedList\PagedList.csproj" />
+    <ProjectReference Include="..\Utils.Domain\Utils.Domain.csproj" />
+    <ProjectReference Include="..\Utils.Respository\Utils.Respository.csproj" />
+    <ProjectReference Include="..\Utils.Services\Utils.Services.csproj" />
+    <ProjectReference Include="..\Utils\Utils.csproj" />
+  </ItemGroup>
+
+</Project>
