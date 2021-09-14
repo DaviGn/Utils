@@ -2,6 +2,6 @@
 {
     public interface IEnableable
     {
-        public bool Ativo { get; set; }
+        public bool Enabled { get; set; }
     }
 }

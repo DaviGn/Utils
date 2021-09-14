@@ -2,6 +2,6 @@
 {
     public interface IDeleteable
     {
-        public bool Excluido { get; set; }
+        public bool Deleted { get; set; }
     }
 }

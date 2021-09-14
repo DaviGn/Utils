@@ -28,7 +28,7 @@ namespace Utils.Services.Bases.Interfaces
             if (!isBaseModel || !isDeleteable)
                 return await _context.Set<TEntity>().FindAsync(id);
 
-            return await _context.Set<TEntity>().FindAsync(x => (x as BaseModel).Id == (int)id && (isDeleteable ? !((IDeleteable)x).Excluido : true));
+            return await _context.Set<TEntity>().FindAsync(x => (x as BaseModel).Id == (int)id && (isDeleteable ? !((IDeleteable)x).Deleted : true));
         }
 
         public virtual async Task<TEntity> Get(Expression<Func<TEntity, bool>> wherePredicate, params Expression<Func<TEntity, object>>[] includeProperties)
@@ -60,7 +60,7 @@ namespace Utils.Services.Bases.Interfaces
             var query = _context.Set<TEntity>().AsQueryable();
 
             if (!incluirExcluidos && isDeleteable)
-                query = query.Where(x => !((IDeleteable)x).Excluido);
+                query = query.Where(x => !((IDeleteable)x).Deleted);
 
             return query;
         }
@@ -82,7 +82,7 @@ namespace Utils.Services.Bases.Interfaces
             query = query.Where(wherePredicate);
 
             if (isDeleteable)
-                query = query.Where(x => !((IDeleteable)x).Excluido);
+                query = query.Where(x => !((IDeleteable)x).Deleted);
 
             foreach (var property in includeProperties)
                 query = query.Include(property);
@@ -134,7 +134,7 @@ namespace Utils.Services.Bases.Interfaces
         {
             if (model is IDeleteable)
             {
-                (model as IDeleteable).Excluido = true;
+                (model as IDeleteable).Deleted = true;
                 Update(model);
             }
             else
