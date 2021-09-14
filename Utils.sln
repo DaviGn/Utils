@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Services", "Utils.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Domain", "Utils.Domain\Utils.Domain.csproj", "{EC31E6C3-5EC8-4C6B-B82F-337782ABBA38}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Respository", "Utils.Respository\Utils.Respository.csproj", "{3077E6EE-EF17-4253-ADE9-C749BE42C9EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Repository", "Utils.Repository\Utils.Repository.csproj", "{3077E6EE-EF17-4253-ADE9-C749BE42C9EF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PagedList", "PagedList\PagedList.csproj", "{32608558-19F8-40F1-88A9-F9D0FBFF467C}"
 EndProject

@@ -7,7 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PagedList\PagedList.csproj" />
     <ProjectReference Include="..\Utils.Domain\Utils.Domain.csproj" />
-    <ProjectReference Include="..\Utils.Respository\Utils.Respository.csproj" />
+    <ProjectReference Include="..\Utils.Repository\Utils.Repository.csproj" />
     <ProjectReference Include="..\Utils.Services\Utils.Services.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
