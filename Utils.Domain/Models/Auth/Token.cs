@@ -8,11 +8,11 @@ namespace Utils.Domain.Models.Auth
         {
             JWT = jwt;
             Issuer = token.Issuer;
-            Validade = token.ValidTo.ToString("s") + "Z";
+            ValidTo = token.ValidTo.ToString("s") + "Z";
         }
 
         public string JWT { get; set; }
         public string Issuer { get; set; }
-        public string Validade { get; set; }
+        public string ValidTo { get; set; }
     }
 }
