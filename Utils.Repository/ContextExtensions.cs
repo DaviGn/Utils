@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Utils.Repository
@@ -20,15 +21,16 @@ namespace Utils.Repository
             return local != null ? local : dbSet.AsNoTracking().FirstOrDefault(predicate);
         }
 
-        public static async Task<T> FindAsync<T>(this DbSet<T> dbSet, Expression<Func<T, bool>> predicate) where T : class
+        public static async Task<T> FindAsync<T>(this DbSet<T> dbSet, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default) where T : class
         {
             var local = dbSet.Local.FirstOrDefault(predicate.Compile());
 
-            return local != null ? local : await dbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
+            return local != null ? local : await dbSet.AsNoTracking().FirstOrDefaultAsync(predicate, cancellationToken);
         }
 
         public static async Task<IList<T>> ExecuteCommandSingletonRsult<T>(this DbContext context, string command,
-                                                                           IEnumerable<SqlParameter> parameters = null, CommandType commandType = CommandType.StoredProcedure)
+                                                                           IEnumerable<SqlParameter> parameters = null, CommandType commandType = CommandType.StoredProcedure,
+                                                                           CancellationToken cancellationToken = default)
         {
             using (var cmd = context.Database.GetDbConnection().CreateCommand())
             {
@@ -48,7 +50,7 @@ namespace Utils.Repository
                 if (cmd.Connection.State != ConnectionState.Open)
                     cmd.Connection.Open();
 
-                using (var dataReader = await cmd.ExecuteReaderAsync())
+                using (var dataReader = await cmd.ExecuteReaderAsync(cancellationToken))
                 {
                     List<T> result = new List<T>();
 
@@ -64,7 +66,8 @@ namespace Utils.Repository
         }
 
         public static async Task<IList<T>> ExecuteCommand<T>(this DbContext context, string command,
-                                                             IEnumerable<SqlParameter> parameters = null, CommandType commandType = CommandType.StoredProcedure)
+                                                             IEnumerable<SqlParameter> parameters = null, CommandType commandType = CommandType.StoredProcedure,
+                                                             CancellationToken cancellationToken = default)
             where T : class, new()
         {
             using (var cmd = context.Database.GetDbConnection().CreateCommand())
@@ -85,7 +88,7 @@ namespace Utils.Repository
                 if (cmd.Connection.State != ConnectionState.Open)
                     cmd.Connection.Open();
 
-                using (var dataReader = await cmd.ExecuteReaderAsync())
+                using (var dataReader = await cmd.ExecuteReaderAsync(cancellationToken))
                 {
                     var test = DataReaderMapToList<T>(dataReader);
                     return test;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Utils.Domain.Interfaces;
 using Utils.Domain.Models.Bases;
@@ -23,43 +24,52 @@ namespace Utils.Services.Bases.Interfaces
             _context = context;
         }
 
-        public virtual async Task<TEntity> GetById(object id)
+        public virtual async Task<TEntity> GetById(object id, CancellationToken cancellationToken = default)
         {
             if (!isBaseModel || !isDeleteable)
                 return await _context.Set<TEntity>().FindAsync(id);
 
-            return await _context.Set<TEntity>().FindAsync(x => (x as BaseModel).Id == (int)id && (isDeleteable ? !((IDeleteable)x).Deleted : true));
+            return await _context.Set<TEntity>().FindAsync(x => (x as BaseModel).Id == (int)id && (isDeleteable ? !((IDeleteable)x).Deleted : true), cancellationToken);
         }
 
         public virtual async Task<TEntity> Get(Expression<Func<TEntity, bool>> wherePredicate, params Expression<Func<TEntity, object>>[] includeProperties)
             => await CreateQuery(wherePredicate, includeProperties).FirstOrDefaultAsync();
 
+        public virtual async Task<TEntity> Get(Expression<Func<TEntity, bool>> wherePredicate, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties)
+            => await CreateQuery(wherePredicate, includeProperties).FirstOrDefaultAsync(cancellationToken);
+
         public virtual async Task<TEntity> GetAny(Expression<Func<TEntity, bool>> wherePredicate, params Expression<Func<TEntity, object>>[] includeProperties)
             => await CreateQueryAny(wherePredicate, includeProperties).FirstOrDefaultAsync();
 
-        public virtual async Task<int> Count(bool incluirExcluidos = false)
-        => await CreateListQuery(incluirExcluidos).AsNoTracking().CountAsync();
+        public virtual async Task<TEntity> GetAny(Expression<Func<TEntity, bool>> wherePredicate, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties)
+            => await CreateQueryAny(wherePredicate, includeProperties).FirstOrDefaultAsync(cancellationToken);
 
-        public virtual async Task<int> Count(Expression<Func<TEntity, bool>> wherePredicate, params Expression<Func<TEntity, object>>[] includeProperties)
-            => await CreateQuery(wherePredicate, includeProperties).CountAsync();
+        public virtual async Task<int> Count(bool incluirDeleteds = false, CancellationToken cancellationToken = default)
+        => await CreateListQuery(incluirDeleteds).AsNoTracking().CountAsync(cancellationToken);
+
+        public virtual async Task<int> Count(Expression<Func<TEntity, bool>> wherePredicate, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties)
+            => await CreateQuery(wherePredicate, includeProperties).CountAsync(cancellationToken);
 
         public virtual async Task<int> Count(Expression<Func<TEntity, bool>> wherePredicate, Expression<Func<TEntity, object>> orderPredicate, params Expression<Func<TEntity, object>>[] includeProperties)
             => await CreateQuery(wherePredicate, orderPredicate, includeProperties).CountAsync();
 
-        public virtual async Task<IList<TEntity>> List(bool incluirExcluidos = false)
-        => await CreateListQuery(incluirExcluidos).AsNoTracking().ToListAsync();
+        public virtual async Task<IList<TEntity>> List(bool incluirDeleteds = false, CancellationToken cancellationToken = default)
+        => await CreateListQuery(incluirDeleteds).AsNoTracking().ToListAsync(cancellationToken);
 
         public virtual async Task<IList<TEntity>> List(Expression<Func<TEntity, bool>> wherePredicate, params Expression<Func<TEntity, object>>[] includeProperties)
             => await CreateQuery(wherePredicate, includeProperties).ToListAsync();
 
+        public virtual async Task<IList<TEntity>> List(Expression<Func<TEntity, bool>> wherePredicate, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties)
+            => await CreateQuery(wherePredicate, includeProperties).ToListAsync(cancellationToken);
+
         public virtual async Task<IList<TEntity>> ListOrdered(Expression<Func<TEntity, bool>> wherePredicate, Expression<Func<TEntity, object>> orderPredicate, params Expression<Func<TEntity, object>>[] includeProperties)
             => await CreateQuery(wherePredicate, orderPredicate, includeProperties).ToListAsync();
 
-        private IQueryable<TEntity> CreateListQuery(bool incluirExcluidos = false)
+        private IQueryable<TEntity> CreateListQuery(bool incluirDeleteds = false)
         {
             var query = _context.Set<TEntity>().AsQueryable();
 
-            if (!incluirExcluidos && isDeleteable)
+            if (!incluirDeleteds && isDeleteable)
                 query = query.Where(x => !((IDeleteable)x).Deleted);
 
             return query;
@@ -102,14 +112,14 @@ namespace Utils.Services.Bases.Interfaces
             return query.AsNoTracking();
         }
 
-        public virtual async Task Add(TEntity model)
+        public virtual async Task Add(TEntity model, CancellationToken cancellationToken = default)
         {
-            await _context.Set<TEntity>().AddAsync(model);
+            await _context.Set<TEntity>().AddAsync(model, cancellationToken);
         }
 
-        public virtual async Task Add(IList<TEntity> models)
+        public virtual async Task Add(IList<TEntity> models, CancellationToken cancellationToken = default)
         {
-            await _context.Set<TEntity>().AddRangeAsync(models);
+            await _context.Set<TEntity>().AddRangeAsync(models, cancellationToken);
         }
 
         public virtual void Update(TEntity model)
