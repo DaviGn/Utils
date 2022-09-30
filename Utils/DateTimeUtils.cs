@@ -1,11 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Utils
 {
     public static class DateTimeUtils
     {
+        public static DateTime ToSouthAmericaTimeZone(this DateTime data)
+        {
+            DateTime dateTimeUTC = data.ToUniversalTime();
+            TimeZoneInfo timeZone;
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+            else
+                throw new Exception("Time zone not supported");
+            
+            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeUTC, timeZone);
+
+           return localTime;
+        }
+        
         public static IEnumerable<DateTime> GerarListaDeDatas(DateTime dataInicio, DateTime dataFim, IEnumerable<DayOfWeek> diasIgnorar = null)
         {
             while (dataInicio <= dataFim)
