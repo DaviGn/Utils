@@ -7,6 +7,18 @@ namespace Utils
 {
     public static class DateTimeUtils
     {
+        private const string DateFormat = "dd/MM/YYYY";
+        private const string TimeFormat = "HH:mm";
+
+        public static string ToTime(this DateTime dateTime)
+            => dateTime.ToString(TimeFormat);
+
+        public static string ToBrazilDateFormat(this DateTime dateTime)
+            => dateTime.ToString(DateFormat);
+
+        public static string ToBrazilDateTimeFormat(this DateTime dateTime)
+            => dateTime.ToString($"{DateFormat} {TimeFormat}");
+        
         public static DateTime ToSouthAmericaTimeZone(this DateTime data)
         {
             DateTime dateTimeUTC = data.ToUniversalTime();
