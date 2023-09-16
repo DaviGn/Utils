@@ -4,6 +4,9 @@ namespace Utils.Extensions
 {
     public static class DateTimeExtensions
     {
+        private const string WindowsTimeZoneId = "E. South America Standard Time";
+        private const string LinuxTimeZoneId = "America/Sao_Paulo";
+            
         public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
         {
             int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
@@ -13,8 +16,8 @@ namespace Utils.Extensions
         public static DateTime ToSouthAmericaTimeZone(this DateTime data)
         {
             DateTime dateTimeUTC = data.ToUniversalTime();
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeUTC, timeZone);
+            string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? LinuxTimeZoneId : WindowsTimeZoneId;
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
             return localTime;
         }
